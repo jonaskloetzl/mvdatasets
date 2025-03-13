@@ -629,7 +629,7 @@ datasets_configs: Dict[str, DatasetConfig] = {
         splits=["train"],
         scene_type="unbounded",
         frame_rate=30.0,
-        max_cameras_distance=None,  # no scaling
+        max_cameras_distance=None,  # scaled to None
     ),
     # MonST3R format
     "monst3r": MonST3RConfig(

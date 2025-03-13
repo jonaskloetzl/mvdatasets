@@ -40,11 +40,11 @@ def main(cfg: ExampleConfig, pc_paths: List[Path]):
     # )
 
     # foreground bb
-    bb = BoundingBox(
-        pose=np.eye(4),
-        local_scale=mv_data.get_foreground_radius() * 2,
-        device=device,
-    )
+    # bb = BoundingBox(
+    #     pose=np.eye(4),
+    #     local_scale=mv_data.get_foreground_radius() * 2,
+    #     device=device,
+    # )
 
     # scene type
     scene_type = mv_data.get_scene_type()
@@ -81,7 +81,7 @@ def main(cfg: ExampleConfig, pc_paths: List[Path]):
             cameras=mv_data.get_split(split),
             draw_every_n_cameras=draw_every_n_cameras,
             point_clouds=mv_data.point_clouds,
-            bounding_boxes=[bb] if bb is not None else [],
+            # bounding_boxes=[bb] if bb is not None else [],
             # bounding_spheres=[bs],
             azimuth_deg=20,
             elevation_deg=30,

@@ -89,13 +89,14 @@ def load(
     # -------------------------------------------------------------------------
 
     # open poses.npy
-    poses_file = scene_path / "poses.npy"
+    poses_file = scene_path / "map_c2w.npy"
     poses = np.load(poses_file)  # (N, 8)
     # iterate over entries
     poses_list = []
     for pose in poses:
-        poses_list.append(_tum_to_c2w(pose))
-    print(f"Loaded poses.npy, {len(poses_list)} frames found")
+        #poses_list.append(_tum_to_c2w(pose))
+        poses_list.append(pose)
+    print(f"Loaded map_c2w.npy, {len(poses_list)} frames found")
         
     # open tstamps.npy
     tstamps_file = scene_path / "tstamps.npy"
@@ -122,9 +123,9 @@ def load(
 
     # local transform
     local_transform = np.array([
-        [-1, 0, 0, 0],
-        [0, 0, 1, 0],
-        [0, 1, 0, 0],
+        [0, 0, -1, 0],
+        [1, 0, 0, 0],
+        [0, -1, 0, 0],
         [0, 0, 0, 1]
     ])
     
@@ -146,14 +147,14 @@ def load(
     #     raise NotImplementedError("pose_only not implemented yet")
     # else:
     # load low resolution droid-slam images.npy
-    images_file = scene_path / "images.npy"
-    images_all = np.load(images_file)  # (N, 3, H, W)
+    #images_file = scene_path / "images.npy"
+    #images_all = np.load(images_file)  # (N, 3, H, W)
     # reshape to (N, H, W, 3)
-    images_all = np.moveaxis(images_all, 1, -1)
+    #images_all = np.moveaxis(images_all, 1, -1)
     # BGR to RGB
-    images_all = images_all[..., ::-1]
-    ds_width, ds_height = images_all.shape[2], images_all.shape[1]
-    print(images_all.shape)
+    #images_all = images_all[..., ::-1]
+    #ds_width, ds_height = images_all.shape[2], images_all.shape[1]
+    #print(images_all.shape)
     
     # load low resolution droid-slam depths
     # if config["load_depths"]:
@@ -191,17 +192,33 @@ def load(
     width, height = rgb_frames[0].shape[1], rgb_frames[0].shape[0]
     
     print(f"Loaded {len(rgb_frames)} RGB frames, {len(depth_frames)} depth frames")
-    print(f"Image shape: {width}x{height}, droid-slam shape: {ds_width}x{ds_height}")
     
     # open intrinsics.npy
     pred_intrinsics_file = scene_path / "intrinsics.npy"
-    intrinsics = np.load(pred_intrinsics_file)[0]
+    intrinsics = np.load(pred_intrinsics_file)
+    print(intrinsics)
+    
+    ds_width = intrinsics[2]*2
+    ds_height = intrinsics[3]*2
     fx = intrinsics[0]
     fy = intrinsics[1]
-    cx = width / 2  # intrinsics[2]
-    cy = height / 2  # intrinsics[3]
+    cx = intrinsics[2]
+    cy = intrinsics[3]
     intrinsics = np.array([[fx, 0, cx], [0, fy, cy], [0, 0, 1]])
+
+    # check image scaling
+    s_height = height / ds_height
+    s_width = width / ds_width
+    # intrinsics
+    intrinsics[0, 0] *= s_width
+    intrinsics[1, 1] *= s_height
+    intrinsics[0,2] = width / 2  # intrinsics[2]
+    intrinsics[1,2] = height / 2  # intrinsics[3]
+    
+    
     print(intrinsics)
+    
+    print(f"Image shape: {width}x{height}, droid-slam shape: {ds_width}x{ds_height}")
     
     # TODO: do need to rescale focal length?
 

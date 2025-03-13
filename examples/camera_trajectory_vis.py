@@ -50,7 +50,7 @@ def main(cfg: ExampleConfig, pc_paths: List[Path]):
         dataset_name=dataset_name,
         nr_frames=-1,  # -1 means all frames
         remove_tmp_files=True,
-        scene_radius=mv_data.get_scene_radius(),
+        scene_radius=100, #mv_data.get_scene_radius(),
         save_path=Path(
             os.path.join(output_path, f"{dataset_name}_{scene_name}_trajectory.mp4")
         ),

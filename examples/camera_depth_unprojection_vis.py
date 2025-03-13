@@ -108,8 +108,8 @@ def main(cfg: ExampleConfig, pc_paths: List[Path]):
         point_clouds=pcs,
         dataset_name=dataset_name,
         remove_tmp_files=False,
-        scene_radius=mv_data.get_scene_radius(),
-        azimuth_deg=280.0,
+        scene_radius=5, # mv_data.get_scene_radius(),
+        azimuth_deg=40.0,
         elevation_deg=5.0,
         save_path=Path(
             os.path.join(
